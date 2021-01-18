@@ -3,13 +3,13 @@
 #include "PlayerSphere.h"
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
+#include "../Traps/Spikes.h"
 
 // Sets default values
 APlayerSphere::APlayerSphere()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 
 	//Sphere_Mesh
 	Sphere_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere Mesh"));
@@ -18,6 +18,7 @@ APlayerSphere::APlayerSphere()
 	Sphere_Mesh->SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshRef(TEXT("StaticMesh'/Engine/EngineMeshes/Sphere.Sphere'"));
 	Sphere_Mesh->SetStaticMesh(SphereMeshRef.Object);
+	Sphere_Mesh->SetNotifyRigidBodyCollision(true);
 
 	//CameraBoom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
@@ -31,10 +32,11 @@ APlayerSphere::APlayerSphere()
 	MainCamera->AttachToComponent(CameraBoom, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
-// Called when the game starts or when spawned
 void APlayerSphere::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	Sphere_Mesh->OnComponentHit.AddDynamic(this, &APlayerSphere::OnComponentHit);
 }
 
 // Called every frame
@@ -87,5 +89,13 @@ void APlayerSphere::Jump()
 	if (Sphere_Mesh->GetComponentVelocity().Z == 0.0f)
 	{
 		Sphere_Mesh->AddImpulse(FVector::UpVector * JumpHeight);
+	}
+}
+
+void APlayerSphere::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	if (OtherActor->IsA(ASpikes::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Over - You hit the spikes"));
 	}
 }

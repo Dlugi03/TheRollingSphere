@@ -52,4 +52,7 @@ public:
 		void LookUp(float Value);
 	UFUNCTION()
 		void Jump();
+
+	UFUNCTION()
+		void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 };
