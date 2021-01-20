@@ -14,13 +14,8 @@ class THEROLLINGSPHERE_API AJumpPad : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AJumpPad();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UStaticMeshComponent* JumpPadMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float LaunchHeightMultiplier = 2.0f;
 };

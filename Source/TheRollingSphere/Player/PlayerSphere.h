@@ -28,11 +28,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MovementSpeed = 1000000.0f;
+		float MovementSpeed = 200000.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float RotationSpeed = 5.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float JumpHeight = 1000000.0f;
+		float JumpHeight = 200000.0f;
 
 public:	
 	// Called every frame

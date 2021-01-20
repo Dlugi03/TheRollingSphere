@@ -4,6 +4,7 @@
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
 #include "../Traps/Spikes.h"
+#include "../LevelActors/JumpPad.h"
 
 // Sets default values
 APlayerSphere::APlayerSphere()
@@ -19,11 +20,12 @@ APlayerSphere::APlayerSphere()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshRef(TEXT("StaticMesh'/Engine/EngineMeshes/Sphere.Sphere'"));
 	Sphere_Mesh->SetStaticMesh(SphereMeshRef.Object);
 	Sphere_Mesh->SetNotifyRigidBodyCollision(true);
+	Sphere_Mesh->SetRelativeScale3D(FVector::OneVector * 0.5f);
 
 	//CameraBoom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	CameraBoom->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	CameraBoom->TargetArmLength = 2500.0f;
+	CameraBoom->TargetArmLength = 1250.0f;
 	CameraBoom->bDoCollisionTest = true;
 	CameraBoom->bEnableCameraLag = true;
 
@@ -68,7 +70,7 @@ void APlayerSphere::RollForward(float Value)
 void APlayerSphere::RollRight(float Value)
 {
 	//AddMovementInput(FVector::RightVector, Value, true);
-	Sphere_Mesh->AddForce(CameraBoom->GetRightVector() * Value * MovementSpeed);
+	Sphere_Mesh->AddForce(FVector(0.0f, 0.0f, CameraBoom->GetRightVector().Z) * Value * MovementSpeed);
 }
 
 void APlayerSphere::LookRight(float Value)
@@ -97,5 +99,12 @@ void APlayerSphere::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * 
 	if (OtherActor->IsA(ASpikes::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Game Over - You hit the spikes"));
+	}
+	else if (OtherActor->IsA(AJumpPad::StaticClass()))
+	{
+		AJumpPad* JumpPad = Cast<AJumpPad>(OtherActor);
+		if (JumpPad == nullptr)
+			return;
+		Sphere_Mesh->AddImpulse(OtherActor->GetActorRotation().GetNormalized().Vector().UpVector * JumpHeight * JumpPad->LaunchHeightMultiplier);
 	}
 }
