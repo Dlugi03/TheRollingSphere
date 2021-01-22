@@ -5,6 +5,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "../Traps/Spikes.h"
 #include "../LevelActors/JumpPad.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerSphere::APlayerSphere()
@@ -70,7 +71,7 @@ void APlayerSphere::RollForward(float Value)
 void APlayerSphere::RollRight(float Value)
 {
 	//AddMovementInput(FVector::RightVector, Value, true);
-	Sphere_Mesh->AddForce(FVector(0.0f, 0.0f, CameraBoom->GetRightVector().Z) * Value * MovementSpeed);
+	Sphere_Mesh->AddForce(CameraBoom->GetRightVector() * Value * MovementSpeed);
 }
 
 void APlayerSphere::LookRight(float Value)
@@ -98,7 +99,7 @@ void APlayerSphere::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * 
 {
 	if (OtherActor->IsA(ASpikes::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Over - You hit the spikes"));
+		UGameplayStatics::OpenLevel(GetWorld(), *GetWorld()->GetMapName(), false);
 	}
 	else if (OtherActor->IsA(AJumpPad::StaticClass()))
 	{
