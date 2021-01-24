@@ -4,17 +4,32 @@
 #include "JumpPad.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/CollisionProfile.h"
+#include "../Player/PlayerSphere.h"
 
 // Sets default values
 AJumpPad::AJumpPad()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	
 	//JumpPadMesh
 	JumpPadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spikes Mesh"));
 	RootComponent = JumpPadMesh;
 	JumpPadMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+	JumpPadMesh->SetNotifyRigidBodyCollision(true);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> JumpPadMeshRef(TEXT("StaticMesh'/Game/Meshes/LaunchPad.LaunchPad'"));
 	JumpPadMesh->SetStaticMesh(JumpPadMeshRef.Object);
+}
+
+void AJumpPad::BeginPlay()
+{
+	Super::BeginPlay();
+
+	JumpPadMesh->OnComponentHit.AddDynamic(this, &AJumpPad::OnComponentHit);
+}
+
+void AJumpPad::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("hit jumppad"));
+	if (OtherActor->IsA(APlayerSphere::StaticClass()))
+	{
+		Cast<APlayerSphere>(OtherActor)->Jump(JumpPadMesh->GetUpVector(), LaunchHeight);
+	}
 }

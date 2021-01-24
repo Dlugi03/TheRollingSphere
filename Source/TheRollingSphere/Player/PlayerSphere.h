@@ -24,9 +24,6 @@ public:
 		class UCameraComponent* MainCamera;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MovementSpeed = 200000.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -51,8 +48,8 @@ public:
 	UFUNCTION()
 		void LookUp(float Value);
 	UFUNCTION()
-		void Jump();
+		void JumpInput();
 
 	UFUNCTION()
-		void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+		void Jump(FVector upVector, float height);
 };

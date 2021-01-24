@@ -3,9 +3,6 @@
 #include "PlayerSphere.h"
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
-#include "../Traps/Spikes.h"
-#include "../LevelActors/JumpPad.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerSphere::APlayerSphere()
@@ -20,7 +17,6 @@ APlayerSphere::APlayerSphere()
 	Sphere_Mesh->SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshRef(TEXT("StaticMesh'/Engine/EngineMeshes/Sphere.Sphere'"));
 	Sphere_Mesh->SetStaticMesh(SphereMeshRef.Object);
-	Sphere_Mesh->SetNotifyRigidBodyCollision(true);
 	Sphere_Mesh->SetRelativeScale3D(FVector::OneVector * 0.5f);
 
 	//CameraBoom
@@ -33,13 +29,6 @@ APlayerSphere::APlayerSphere()
 	//MainCamera
 	MainCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Main Camera"));
 	MainCamera->AttachToComponent(CameraBoom, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-}
-
-void APlayerSphere::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	Sphere_Mesh->OnComponentHit.AddDynamic(this, &APlayerSphere::OnComponentHit);
 }
 
 // Called every frame
@@ -59,7 +48,7 @@ void APlayerSphere::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("RollRight", this, &APlayerSphere::RollRight);
 	PlayerInputComponent->BindAxis("LookRight", this, &APlayerSphere::LookRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerSphere::LookUp);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerSphere::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerSphere::JumpInput);
 }
 
 void APlayerSphere::RollForward(float Value)
@@ -87,25 +76,15 @@ void APlayerSphere::LookUp(float Value)
 	CameraBoom->SetRelativeRotation(FRotator(CurrentPitch, CameraBoom->GetRelativeRotation().Yaw, 0.0f));
 }
 
-void APlayerSphere::Jump()
+void APlayerSphere::JumpInput()
 {
 	if (Sphere_Mesh->GetComponentVelocity().Z == 0.0f)
 	{
-		Sphere_Mesh->AddImpulse(FVector::UpVector * JumpHeight);
+		Jump(FVector::UpVector, JumpHeight);
 	}
 }
 
-void APlayerSphere::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+void APlayerSphere::Jump(FVector upVector, float height)
 {
-	if (OtherActor->IsA(ASpikes::StaticClass()))
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), *GetWorld()->GetMapName(), false);
-	}
-	else if (OtherActor->IsA(AJumpPad::StaticClass()))
-	{
-		AJumpPad* JumpPad = Cast<AJumpPad>(OtherActor);
-		if (JumpPad == nullptr)
-			return;
-		Sphere_Mesh->AddImpulse(OtherActor->GetActorRotation().GetNormalized().Vector().UpVector * JumpHeight * JumpPad->LaunchHeightMultiplier);
-	}
+	Sphere_Mesh->AddImpulse(FVector::UpVector * height);
 }

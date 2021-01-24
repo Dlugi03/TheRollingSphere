@@ -4,17 +4,32 @@
 #include "Spikes.h"
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
+#include "../Player/PlayerSphere.h"
 
 // Sets default values
 ASpikes::ASpikes()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	//SpikesMesh
 	SpikesMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spikes Mesh"));
 	RootComponent = SpikesMesh;
 	SpikesMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+	SpikesMesh->SetNotifyRigidBodyCollision(true);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SpikesMeshRef(TEXT("StaticMesh'/Game/Meshes/Spikes.Spikes'"));
 	SpikesMesh->SetStaticMesh(SpikesMeshRef.Object);
+}
+
+void ASpikes::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SpikesMesh->OnComponentHit.AddDynamic(this, &ASpikes::OnComponentHit);
+}
+
+void ASpikes::OnComponentHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	if (OtherActor->IsA(APlayerSphere::StaticClass()))
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), *GetWorld()->GetMapName());
+	}
 }
