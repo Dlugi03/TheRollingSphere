@@ -11,7 +11,8 @@ AJumpPad::AJumpPad()
 {
 	//JumpPadMesh
 	JumpPadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spikes Mesh"));
-	RootComponent = JumpPadMesh;
+	//RootComponent = JumpPadMesh;
+	JumpPadMesh->SetupAttachment(RootComponent);
 	JumpPadMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	JumpPadMesh->SetNotifyRigidBodyCollision(true);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> JumpPadMeshRef(TEXT("StaticMesh'/Game/Meshes/LaunchPad.LaunchPad'"));

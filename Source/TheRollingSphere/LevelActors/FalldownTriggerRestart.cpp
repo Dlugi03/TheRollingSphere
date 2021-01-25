@@ -14,7 +14,8 @@ AFalldownTriggerRestart::AFalldownTriggerRestart()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Trigger Box"));
-	RootComponent = TriggerBox;
+	//RootComponent = TriggerBox;
+	TriggerBox->SetupAttachment(RootComponent);
 	TriggerBox->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
 	TriggerBox->SetNotifyRigidBodyCollision(true);
 }

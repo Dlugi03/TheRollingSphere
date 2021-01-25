@@ -13,7 +13,8 @@ AHitDestructible::AHitDestructible()
 	
 	//MainMesh
 	MainMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Main Mesh"));
-	RootComponent = MainMesh;
+	//RootComponent = MainMesh;
+	MainMesh->SetupAttachment(RootComponent);
 	MainMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MainMeshRef(TEXT("StaticMesh'/Game/Meshes/LaunchPad.LaunchPad'"));
 	MainMesh->SetStaticMesh(MainMeshRef.Object);
