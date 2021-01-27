@@ -12,7 +12,7 @@ APlayerSphere::APlayerSphere()
 
 	//Sphere_Mesh
 	Sphere_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere Mesh"));
-	Sphere_Mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Sphere_Mesh->SetupAttachment(RootComponent);
 	Sphere_Mesh->SetSimulatePhysics(true);
 	Sphere_Mesh->SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshRef(TEXT("StaticMesh'/Engine/EngineMeshes/Sphere.Sphere'"));
@@ -21,7 +21,7 @@ APlayerSphere::APlayerSphere()
 
 	//CameraBoom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
-	CameraBoom->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 1250.0f;
 	CameraBoom->bDoCollisionTest = true;
 	CameraBoom->bEnableCameraLag = true;

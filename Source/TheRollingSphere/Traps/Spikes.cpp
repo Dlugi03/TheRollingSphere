@@ -12,7 +12,6 @@ ASpikes::ASpikes()
 {
 	//SpikesMesh
 	SpikesMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spikes Mesh"));
-	//RootComponent = SpikesMesh;
 	SpikesMesh->SetupAttachment(RootComponent);
 	SpikesMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	SpikesMesh->SetNotifyRigidBodyCollision(true);
