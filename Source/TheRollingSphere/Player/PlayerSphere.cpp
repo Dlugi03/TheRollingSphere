@@ -28,7 +28,8 @@ APlayerSphere::APlayerSphere()
 
 	//MainCamera
 	MainCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Main Camera"));
-	MainCamera->AttachToComponent(CameraBoom, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	MainCamera->SetupAttachment(CameraBoom);
+	//MainCamera->AttachToComponent(CameraBoom, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
 // Called every frame
