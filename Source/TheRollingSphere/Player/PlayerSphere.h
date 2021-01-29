@@ -52,4 +52,7 @@ public:
 
 	UFUNCTION()
 		void Jump(FVector upVector, float height);
+	
+	UFUNCTION()
+		void QuitToMainMenu();
 };

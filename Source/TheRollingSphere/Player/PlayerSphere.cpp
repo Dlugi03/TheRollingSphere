@@ -3,6 +3,7 @@
 #include "PlayerSphere.h"
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerSphere::APlayerSphere()
@@ -50,6 +51,7 @@ void APlayerSphere::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookRight", this, &APlayerSphere::LookRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerSphere::LookUp);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerSphere::JumpInput);
+	PlayerInputComponent->BindAction("QuitToMainMenu", IE_Pressed, this, &APlayerSphere::QuitToMainMenu);
 }
 
 void APlayerSphere::RollForward(float Value)
@@ -88,4 +90,9 @@ void APlayerSphere::JumpInput()
 void APlayerSphere::Jump(FVector upVector, float height)
 {
 	Sphere_Mesh->AddImpulse(FVector::UpVector * height);
+}
+
+void APlayerSphere::QuitToMainMenu()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
 }
